@@ -2,7 +2,7 @@
 
 namespace Jvancoillie\LdapFilterLexer\AST;
 
-class FilterTypeNode extends Node
+class FilterTypeNode
 {
     public string $value;
 
