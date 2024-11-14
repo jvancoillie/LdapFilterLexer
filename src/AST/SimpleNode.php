@@ -2,7 +2,10 @@
 
 namespace Jvancoillie\LdapFilterLexer\AST;
 
-class SimpleNode extends Node
+use Jvancoillie\LdapFilterLexer\Visitor\NodeVisitorInterface;
+use Jvancoillie\LdapFilterLexer\Visitor\VisitableNodeInterface;
+
+class SimpleNode extends Node implements VisitableNodeInterface
 {
     public AttributeNode $attribute;
     public FilterTypeNode $filterType;
@@ -13,5 +16,10 @@ class SimpleNode extends Node
         $this->attribute = $attribute;
         $this->filterType = $filterType;
         $this->assertionValue = $assertionValue;
+    }
+
+    public function accept(NodeVisitorInterface $visitor): mixed
+    {
+        return $visitor->visitSimpleNode($this);
     }
 }

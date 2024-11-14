@@ -2,7 +2,7 @@
 
 namespace Jvancoillie\LdapFilterLexer\AST;
 
-class AssertionValueNode extends Node
+class AssertionValueNode
 {
     public ?string $value;
 

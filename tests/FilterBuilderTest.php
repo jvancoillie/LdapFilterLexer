@@ -2,6 +2,7 @@
 
 namespace Jvancoillie\LdapFilterLexer\Tests;
 
+use Jvancoillie\LdapFilterLexer\Expression;
 use Jvancoillie\LdapFilterLexer\FilterBuilder;
 use PHPUnit\Framework\TestCase;
 
@@ -74,6 +75,20 @@ class FilterBuilderTest extends TestCase
         $filter = $filterBuilder->not($filterBuilder->equals('uid', 'bJensen'))->getFilter();
 
         $this->assertEquals('(!(uid=bJensen))', (string) $filter);
+    }
+
+    public function testCreateWithStringFilter()
+    {
+        $stringFilter = '(cn=John Doe)';
+
+        $filterBuilder = FilterBuilder::create($stringFilter);
+
+        $expression = $filterBuilder->getExpression();
+
+        $this->assertNotNull($expression);
+        $this->assertInstanceOf(Expression\Base::class, $expression);
+
+        $this->assertInstanceOf(Expression\Comparison::class, $expression);
     }
 
     public function testInvalidArgumentExceptionOnNullExpression()
