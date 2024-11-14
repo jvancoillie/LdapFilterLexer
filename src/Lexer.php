@@ -24,7 +24,6 @@ class Lexer extends AbstractLexer
         $this->setInput($input);
     }
 
-    /** {@inheritdoc} */
     protected function getCatchablePatterns(): array
     {
         return [
@@ -35,15 +34,12 @@ class Lexer extends AbstractLexer
         ];
     }
 
-    /** {@inheritdoc} */
     protected function getNonCatchablePatterns(): array
     {
         return [];
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @param string $value
      */
     protected function getType(&$value): string
