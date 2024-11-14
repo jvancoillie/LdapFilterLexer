@@ -2,7 +2,10 @@
 
 namespace Jvancoillie\LdapFilterLexer\AST;
 
-class OrNode extends Node
+use Jvancoillie\LdapFilterLexer\Visitor\NodeVisitorInterface;
+use Jvancoillie\LdapFilterLexer\Visitor\VisitableNodeInterface;
+
+class OrNode extends Node implements VisitableNodeInterface
 {
     /** @var array<Node> */
     public array $conditions = [];
@@ -11,5 +14,10 @@ class OrNode extends Node
     public function __construct(array $conditions = [])
     {
         $this->conditions = $conditions;
+    }
+
+    public function accept(NodeVisitorInterface $visitor): mixed
+    {
+        return $visitor->visitOrNode($this);
     }
 }
