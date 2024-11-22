@@ -2,14 +2,14 @@
 
 namespace Jvancoillie\LdapFilterLexer\Visitor;
 
-use Jvancoillie\LdapFilterLexer\Expression;
-
 interface VisitableNodeInterface
 {
     /**
-     * @param NodeVisitorInterface<Expression\Base> $visitor
+     * @template T
      *
-     * @return Expression\Base
+     * @param NodeVisitorInterface<T> $visitor
+     *
+     * @return T
      */
     public function accept(NodeVisitorInterface $visitor): mixed;
 }
