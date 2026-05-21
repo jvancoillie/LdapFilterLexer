@@ -57,4 +57,20 @@ class ParserTest extends TestCase
         yield 'exclamation in value' => ['(attr=foo!bar)', 'foo!bar'];
         yield 'multiple pipes' => ['(attr=a|b|c)', 'a|b|c'];
     }
+
+    /** @dataProvider invalidAttributeWithSpacesProvider */
+    public function testParserRejectsAttributeWithSpaces(string $filter): void
+    {
+        $this->expectException(FilterException::class);
+
+        $parser = new Parser(new Filter($filter));
+        $parser->getAST();
+    }
+
+    public static function invalidAttributeWithSpacesProvider(): \Generator
+    {
+        yield 'trailing space before operator' => ['(attr =value)'];
+        yield 'leading space after lparen' => ['( attr=value)'];
+        yield 'spaces on both sides' => ['(attr = value)'];
+    }
 }

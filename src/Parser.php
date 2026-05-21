@@ -132,9 +132,13 @@ class Parser
             $this->syntaxError('attribute cannot be null');
         }
 
+        if ($value !== trim($value)) {
+            $this->syntaxError('attribute name cannot contain leading or trailing whitespace');
+        }
+
         $this->match(Lexer::ATTRIBUTE_OR_ASSERTION_VALUE);
 
-        return new AttributeNode($value ?? '');
+        return new AttributeNode($value);
     }
 
     private function getAssertionValue(): AssertionValueNode
@@ -191,7 +195,7 @@ class Parser
     /**
      * @throws FilterException
      */
-    private function syntaxError(string $expected = ''): void
+    private function syntaxError(string $expected = ''): never
     {
         $token = $this->lexer->lookahead;
 
