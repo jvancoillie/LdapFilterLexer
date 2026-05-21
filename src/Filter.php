@@ -22,7 +22,7 @@ class Filter
     {
         try {
             $this->getParser()->getAST();
-        } catch (\Exception) {
+        } catch (FilterException) {
             return false;
         }
 
