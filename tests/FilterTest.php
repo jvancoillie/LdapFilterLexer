@@ -45,4 +45,39 @@ class FilterTest extends TestCase
             yield $filter => [$filter];
         }
     }
+
+    /** @dataProvider invalidFilters */
+    public function testFilterIsInvalid(string $filter): void
+    {
+        $this->assertFalse((new Filter($filter))->isValid());
+    }
+
+    public static function invalidFilters(): \Generator
+    {
+        $filters = [
+            '(sn*jdoe*)',
+            'cn=value',
+            '(cn=value',
+            '(!(cn=john*)(cn=doe*)',
+            '(attr =value)',
+        ];
+
+        foreach ($filters as $filter) {
+            yield $filter => [$filter];
+        }
+    }
+
+    public function testIsValidDoesNotSwallowNonFilterExceptions(): void
+    {
+        $this->expectException(\RuntimeException::class);
+
+        $filter = new class('(cn=test)') extends Filter {
+            public function getParser(): \Jvancoillie\LdapFilterLexer\Parser
+            {
+                throw new \RuntimeException('unexpected internal error');
+            }
+        };
+
+        $filter->isValid();
+    }
 }
