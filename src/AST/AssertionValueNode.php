@@ -4,10 +4,7 @@ namespace Jvancoillie\LdapFilterLexer\AST;
 
 class AssertionValueNode
 {
-    public ?string $value;
-
-    public function __construct(?string $value)
+    public function __construct(public readonly ?string $value)
     {
-        $this->value = $value;
     }
 }

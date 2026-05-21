@@ -7,13 +7,9 @@ use Jvancoillie\LdapFilterLexer\Visitor\VisitableNodeInterface;
 
 class OrNode extends Node implements VisitableNodeInterface
 {
-    /** @var array<Node> */
-    public array $conditions = [];
-
-    /** @param array<Node> $conditions*/
-    public function __construct(array $conditions = [])
+    /** @param array<Node> $conditions */
+    public function __construct(public readonly array $conditions = [])
     {
-        $this->conditions = $conditions;
     }
 
     public function accept(NodeVisitorInterface $visitor): mixed

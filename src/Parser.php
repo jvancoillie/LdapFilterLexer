@@ -166,7 +166,8 @@ class Parser
         $parts = explode(':', $token);
         array_pop($parts); // remove trailing empty element (token always ends with ':')
 
-        $attribute = array_shift($parts) ?: null;
+        $firstPart = array_shift($parts);
+        $attribute = (null !== $firstPart && '' !== $firstPart) ? $firstPart : null;
         $dnAttributes = false;
         $matchingRule = null;
 
