@@ -4,9 +4,9 @@
          bootstrap="vendor/autoload.php"
          colors="true"
          executionOrder="defects"
+         failOnRisky="true"
+         failOnWarning="true"
 >
-    <coverage/>
-
     <testsuites>
         <testsuite name="LdapFilterLexer Test Suite">
             <directory>./tests</directory>
