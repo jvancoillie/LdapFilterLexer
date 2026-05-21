@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 class FilterTest extends TestCase
 {
     /** @dataProvider  validFilters */
-    public function testFilterIsValid(string $filter)
+    public function testFilterIsValid(string $filter): void
     {
         $filter = new Filter($filter);
 

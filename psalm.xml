@@ -5,10 +5,11 @@
     xsi:schemaLocation="https://getpsalm.org/schema/config ./vendor/vimeo/psalm/config.xsd"
     errorLevel="1"
     findUnusedBaselineEntry="true"
-    findUnusedCode="false"
+    findUnusedCode="true"
 >
     <projectFiles>
         <directory name="src" />
+        <directory name="tests" />
         <ignoreFiles>
             <directory name="vendor" />
         </ignoreFiles>
@@ -18,5 +19,10 @@
         <MissingOverrideAttribute errorLevel="suppress" />
         <ClassMustBeFinal errorLevel="suppress" />
         <ImplicitToStringCast errorLevel="suppress" />
+        <UnusedClass>
+            <errorLevel type="suppress">
+                <directory name="tests" />
+            </errorLevel>
+        </UnusedClass>
     </issueHandlers>
 </psalm>

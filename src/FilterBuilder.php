@@ -18,9 +18,6 @@ class FilterBuilder
             $filter = new Filter($stringFilter);
             $visitor = new LdapExpressionVisitor();
             $ast = $filter->getParser()->getAST();
-            /**
-             * @var Expression\Base $expression
-             */
             $expression = $ast->accept($visitor);
         }
 

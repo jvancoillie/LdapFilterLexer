@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
 
 class LdapExpressionVisitorTest extends TestCase
 {
-    public function testVisitAndNode()
+    public function testVisitAndNode(): void
     {
         $andNode = new AndNode([
             new SimpleNode(new AttributeNode('attr1'), new FilterTypeNode(Lexer::EQUALS), new AssertionValueNode('value1')),
@@ -31,7 +31,7 @@ class LdapExpressionVisitorTest extends TestCase
         $this->assertSame('(&(attr1=value1)(attr2=value2))', (string) $result);
     }
 
-    public function testVisitOrNode()
+    public function testVisitOrNode(): void
     {
         $orNode = new OrNode([
             new SimpleNode(new AttributeNode('attr1'), new FilterTypeNode(Lexer::EQUALS), new AssertionValueNode('value1')),
@@ -45,7 +45,7 @@ class LdapExpressionVisitorTest extends TestCase
         $this->assertSame('(|(attr1=value1)(attr2=value2))', (string) $result);
     }
 
-    public function testVisitNotNode()
+    public function testVisitNotNode(): void
     {
         $notNode = new NotNode(new SimpleNode(new AttributeNode('attr1'), new FilterTypeNode(Lexer::EQUALS), new AssertionValueNode('value1')));
 
@@ -55,7 +55,7 @@ class LdapExpressionVisitorTest extends TestCase
         $this->assertInstanceOf(Expression\Not::class, $result);
     }
 
-    public function testVisitSimpleNode()
+    public function testVisitSimpleNode(): void
     {
         $simpleNode = new SimpleNode(new AttributeNode('attr1'), new FilterTypeNode(Lexer::EQUALS), new AssertionValueNode('value1'));
 
@@ -66,13 +66,13 @@ class LdapExpressionVisitorTest extends TestCase
         $this->assertSame('(attr1=value1)', (string) $result);
     }
 
-    public function testVisitSimpleNodeThrowExceptionOnEmptyAssertionValue()
+    public function testVisitSimpleNodeThrowExceptionOnEmptyAssertionValue(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $simpleNode = new SimpleNode(new AttributeNode('attr1'), new FilterTypeNode(Lexer::EQUALS), new AssertionValueNode(null));
 
         $visitor = new LdapExpressionVisitor();
-        $result = $simpleNode->accept($visitor);
+        $simpleNode->accept($visitor);
     }
 
     /** @dataProvider extensibleNodeProvider */

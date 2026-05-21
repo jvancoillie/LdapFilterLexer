@@ -11,16 +11,14 @@ use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
 {
-    public function testParserReturnAst()
+    public function testParserReturnAst(): void
     {
         $parser = new Parser(new Filter('(&(objectClass=person)(|(sn=*jdoe*)(givenname=*jdoe*)))'));
 
-        $ast = $parser->getAST();
-
-        $this->assertNotNull($ast);
+        $this->assertInstanceOf(\Jvancoillie\LdapFilterLexer\AST\Node::class, $parser->getAST());
     }
 
-    public function testParserThrowExceptionOnSimpleFilterWithoutFilterType()
+    public function testParserThrowExceptionOnSimpleFilterWithoutFilterType(): void
     {
         $this->expectException(FilterException::class);
         $this->expectExceptionMessage("[Syntax Error] line 0, col 9: Error: Expected filter type (~=, =, <=, >=), got ')' on query '(sn*jdoe*)'");
@@ -29,7 +27,7 @@ class ParserTest extends TestCase
         $parser->getAST();
     }
 
-    public function testParserThrowExceptionOnNotFilterWithMultipleSimpleFilter()
+    public function testParserThrowExceptionOnNotFilterWithMultipleSimpleFilter(): void
     {
         $this->expectException(FilterException::class);
         $this->expectExceptionMessage("[Syntax Error] line 0, col 12: Error: Expected ), got '(' on query '(!(cn=john*)(cn=doe*)'");
@@ -94,9 +92,7 @@ class ParserTest extends TestCase
     /** @dataProvider validMultipleConditionsProvider */
     public function testParserAcceptsAndOrWithTwoOrMoreConditions(string $filter): void
     {
-        $ast = (new Parser(new Filter($filter)))->getAST();
-
-        $this->assertNotNull($ast);
+        $this->assertInstanceOf(\Jvancoillie\LdapFilterLexer\AST\Node::class, (new Parser(new Filter($filter)))->getAST());
     }
 
     public static function validMultipleConditionsProvider(): \Generator
