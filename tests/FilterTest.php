@@ -35,6 +35,10 @@ class FilterTest extends TestCase
             '(bin=\00\00\00\04)',
             '(sn=Lu\c4\8di\c4\87)',
             '(1.3.6.1.4.1.1466.0=\04\02\48\69)',
+            '(attr=chainA*|DEC|)',
+            '(attr=val|ue)',
+            '(attr=foo&bar)',
+            '(attr=foo!bar)',
         ];
 
         foreach ($filters as $filter) {

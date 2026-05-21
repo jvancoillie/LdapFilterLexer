@@ -141,10 +141,9 @@ class Parser
     {
         $value = null;
 
-        if (!$this->lexer->isNextToken(Lexer::RPAREN)) {
-            $value = $this->lexer->lookahead->value ?? null;
-
-            $this->match(Lexer::ATTRIBUTE_OR_ASSERTION_VALUE);
+        while (null !== $this->lexer->lookahead && !$this->lexer->isNextToken(Lexer::RPAREN)) {
+            $value = ($value ?? '').$this->lexer->lookahead->value;
+            $this->lexer->moveNext();
         }
 
         return new AssertionValueNode($value);

@@ -13,4 +13,10 @@
             <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
+
+    <issueHandlers>
+        <MissingOverrideAttribute errorLevel="suppress" />
+        <ClassMustBeFinal errorLevel="suppress" />
+        <ImplicitToStringCast errorLevel="suppress" />
+    </issueHandlers>
 </psalm>

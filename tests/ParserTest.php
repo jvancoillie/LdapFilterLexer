@@ -2,6 +2,7 @@
 
 namespace Jvancoillie\LdapFilterLexer\Tests;
 
+use Jvancoillie\LdapFilterLexer\AST\SimpleNode;
 use Jvancoillie\LdapFilterLexer\Filter;
 use Jvancoillie\LdapFilterLexer\FilterException;
 use Jvancoillie\LdapFilterLexer\Parser;
@@ -34,5 +35,26 @@ class ParserTest extends TestCase
 
         $parser = new Parser(new Filter('(!(cn=john*)(cn=doe*)'));
         $parser->getAST();
+    }
+
+    /**
+     * @dataProvider assertionValueWithSpecialCharsProvider
+     */
+    public function testAssertionValuePreservesSpecialChars(string $filter, string $expectedValue): void
+    {
+        $parser = new Parser(new Filter($filter));
+        $ast = $parser->getAST();
+
+        $this->assertInstanceOf(SimpleNode::class, $ast);
+        $this->assertSame($expectedValue, $ast->assertionValue->value);
+    }
+
+    public static function assertionValueWithSpecialCharsProvider(): \Generator
+    {
+        yield 'pipe in value' => ['(attr=chainA*|DEC|)', 'chainA*|DEC|'];
+        yield 'pipe at end' => ['(attr=val|)', 'val|'];
+        yield 'ampersand in value' => ['(attr=foo&bar)', 'foo&bar'];
+        yield 'exclamation in value' => ['(attr=foo!bar)', 'foo!bar'];
+        yield 'multiple pipes' => ['(attr=a|b|c)', 'a|b|c'];
     }
 }
