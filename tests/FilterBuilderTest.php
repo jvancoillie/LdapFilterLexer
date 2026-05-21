@@ -101,4 +101,41 @@ class FilterBuilderTest extends TestCase
             FilterBuilder::create()
         );
     }
+
+    public function testAndXChaining(): void
+    {
+        $filter = FilterBuilder::create()
+            ->equals('cn', 'Jensen')
+            ->andX(FilterBuilder::create()->equals('uid', 'bJensen'))
+            ->getFilter();
+
+        $this->assertSame('(&(cn=Jensen)(uid=bJensen))', (string) $filter);
+    }
+
+    public function testOrXChaining(): void
+    {
+        $filter = FilterBuilder::create()
+            ->equals('cn', 'Jensen')
+            ->orX(FilterBuilder::create()->equals('uid', 'bJensen'))
+            ->getFilter();
+
+        $this->assertSame('(|(cn=Jensen)(uid=bJensen))', (string) $filter);
+    }
+
+    public function testNotChainingWithoutArgument(): void
+    {
+        $filter = FilterBuilder::create()
+            ->equals('uid', 'bJensen')
+            ->not()
+            ->getFilter();
+
+        $this->assertSame('(!(uid=bJensen))', (string) $filter);
+    }
+
+    public function testNotThrowsWhenNoExpressionAvailable(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        FilterBuilder::create()->not();
+    }
 }
