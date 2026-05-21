@@ -76,6 +76,10 @@ class Parser
             $conditions[] = $this->parseExpression();
         }
 
+        if (\count($conditions) < 2) {
+            $this->syntaxError('AND filter requires at least 2 conditions');
+        }
+
         return new AndNode($conditions);
     }
 
@@ -89,6 +93,10 @@ class Parser
 
         while (!$this->lexer->isNextToken(Lexer::RPAREN)) {
             $conditions[] = $this->parseExpression();
+        }
+
+        if (\count($conditions) < 2) {
+            $this->syntaxError('OR filter requires at least 2 conditions');
         }
 
         return new OrNode($conditions);
