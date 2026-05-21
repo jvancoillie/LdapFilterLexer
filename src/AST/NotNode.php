@@ -7,11 +7,8 @@ use Jvancoillie\LdapFilterLexer\Visitor\VisitableNodeInterface;
 
 class NotNode extends Node implements VisitableNodeInterface
 {
-    public Node $condition;
-
-    public function __construct(Node $condition)
+    public function __construct(public readonly Node $condition)
     {
-        $this->condition = $condition;
     }
 
     public function accept(NodeVisitorInterface $visitor): mixed
