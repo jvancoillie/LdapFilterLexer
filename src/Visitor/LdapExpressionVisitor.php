@@ -3,6 +3,7 @@
 namespace Jvancoillie\LdapFilterLexer\Visitor;
 
 use Jvancoillie\LdapFilterLexer\AST\AndNode;
+use Jvancoillie\LdapFilterLexer\AST\ExtensibleNode;
 use Jvancoillie\LdapFilterLexer\AST\NotNode;
 use Jvancoillie\LdapFilterLexer\AST\OrNode;
 use Jvancoillie\LdapFilterLexer\AST\SimpleNode;
@@ -42,6 +43,16 @@ class LdapExpressionVisitor implements NodeVisitorInterface
             $node->attribute->value,
             $node->filterType->value,
             $value
+        );
+    }
+
+    public function visitExtensibleNode(ExtensibleNode $node): Expression\ExtensibleMatch
+    {
+        return new Expression\ExtensibleMatch(
+            $node->attribute,
+            $node->dnAttributes,
+            $node->matchingRule,
+            $node->assertionValue->value ?? '',
         );
     }
 }

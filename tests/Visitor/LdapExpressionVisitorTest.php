@@ -5,6 +5,7 @@ namespace Jvancoillie\LdapFilterLexer\Tests\Visitor;
 use Jvancoillie\LdapFilterLexer\AST\AndNode;
 use Jvancoillie\LdapFilterLexer\AST\AssertionValueNode;
 use Jvancoillie\LdapFilterLexer\AST\AttributeNode;
+use Jvancoillie\LdapFilterLexer\AST\ExtensibleNode;
 use Jvancoillie\LdapFilterLexer\AST\FilterTypeNode;
 use Jvancoillie\LdapFilterLexer\AST\NotNode;
 use Jvancoillie\LdapFilterLexer\AST\OrNode;
@@ -72,5 +73,25 @@ class LdapExpressionVisitorTest extends TestCase
 
         $visitor = new LdapExpressionVisitor();
         $result = $simpleNode->accept($visitor);
+    }
+
+    /** @dataProvider extensibleNodeProvider */
+    public function testVisitExtensibleNode(ExtensibleNode $node, string $expected): void
+    {
+        $visitor = new LdapExpressionVisitor();
+        $result = $node->accept($visitor);
+
+        $this->assertInstanceOf(Expression\ExtensibleMatch::class, $result);
+        $this->assertSame($expected, (string) $result);
+    }
+
+    public static function extensibleNodeProvider(): \Generator
+    {
+        yield 'attr only' => [new ExtensibleNode('cn', false, null, new AssertionValueNode('Betty Rubble')), '(cn:=Betty Rubble)'];
+        yield 'attr + matchingRule' => [new ExtensibleNode('cn', false, 'caseExactMatch', new AssertionValueNode('Fred Flintstone')), '(cn:caseExactMatch:=Fred Flintstone)'];
+        yield 'attr + dn' => [new ExtensibleNode('o', true, null, new AssertionValueNode('Ace Industry')), '(o:dn:=Ace Industry)'];
+        yield 'attr + dn + matchingRule' => [new ExtensibleNode('sn', true, '2.4.6.8.10', new AssertionValueNode('Barney Rubble')), '(sn:dn:2.4.6.8.10:=Barney Rubble)'];
+        yield 'matchingRule only' => [new ExtensibleNode(null, false, '1.2.3', new AssertionValueNode('Wilma Flintstone')), '(:1.2.3:=Wilma Flintstone)'];
+        yield 'dn + matchingRule' => [new ExtensibleNode(null, true, '2.4.6.8.10', new AssertionValueNode('Dino')), '(:dn:2.4.6.8.10:=Dino)'];
     }
 }
