@@ -73,4 +73,36 @@ class ParserTest extends TestCase
         yield 'leading space after lparen' => ['( attr=value)'];
         yield 'spaces on both sides' => ['(attr = value)'];
     }
+
+    /** @dataProvider insufficientConditionsProvider */
+    public function testParserRejectsAndOrWithLessThanTwoConditions(string $filter): void
+    {
+        $this->expectException(FilterException::class);
+
+        (new Parser(new Filter($filter)))->getAST();
+    }
+
+    public static function insufficientConditionsProvider(): \Generator
+    {
+        yield 'AND with zero conditions' => ['(&)'];
+        yield 'AND with one condition' => ['(&(cn=value))'];
+        yield 'OR with zero conditions' => ['(|)'];
+        yield 'OR with one condition' => ['(|(cn=value))'];
+    }
+
+    /** @dataProvider validMultipleConditionsProvider */
+    public function testParserAcceptsAndOrWithTwoOrMoreConditions(string $filter): void
+    {
+        $ast = (new Parser(new Filter($filter)))->getAST();
+
+        $this->assertNotNull($ast);
+    }
+
+    public static function validMultipleConditionsProvider(): \Generator
+    {
+        yield 'AND with two conditions' => ['(&(cn=a)(sn=b))'];
+        yield 'AND with three conditions' => ['(&(cn=a)(sn=b)(uid=c))'];
+        yield 'OR with two conditions' => ['(|(cn=a)(sn=b))'];
+        yield 'OR with three conditions' => ['(|(cn=a)(sn=b)(uid=c))'];
+    }
 }
