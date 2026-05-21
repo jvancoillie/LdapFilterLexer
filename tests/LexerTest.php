@@ -2,6 +2,7 @@
 
 namespace Jvancoillie\LdapFilterLexer\Tests;
 
+use Doctrine\Common\Lexer\AbstractLexer;
 use Jvancoillie\LdapFilterLexer\Lexer;
 use PHPUnit\Framework\TestCase;
 
@@ -11,7 +12,7 @@ class LexerTest extends TestCase
     {
         $lexer = new Lexer('test extend');
 
-        $this->assertInstanceOf('Doctrine\Common\Lexer\AbstractLexer', $lexer);
+        $this->assertInstanceOf(AbstractLexer::class, $lexer);
     }
 
     /** @return iterable<string, array{string, string, string}> */

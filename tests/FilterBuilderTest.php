@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class FilterBuilderTest extends TestCase
 {
-    public function testEquals()
+    public function testEquals(): void
     {
         $filterBuilder = FilterBuilder::create();
 
@@ -17,7 +17,7 @@ class FilterBuilderTest extends TestCase
         $this->assertEquals('(givename=Jensen)', (string) $filter);
     }
 
-    public function testGreaterThan()
+    public function testGreaterThan(): void
     {
         $filterBuilder = FilterBuilder::create();
 
@@ -26,7 +26,7 @@ class FilterBuilderTest extends TestCase
         $this->assertEquals('(age>=30)', (string) $filter);
     }
 
-    public function testLowerThan()
+    public function testLowerThan(): void
     {
         $filterBuilder = FilterBuilder::create();
 
@@ -35,7 +35,7 @@ class FilterBuilderTest extends TestCase
         $this->assertEquals('(age<=30)', (string) $filter);
     }
 
-    public function testApproximate()
+    public function testApproximate(): void
     {
         $filterBuilder = FilterBuilder::create();
 
@@ -44,7 +44,7 @@ class FilterBuilderTest extends TestCase
         $this->assertEquals('(email~=example@domain.com)', (string) $filter);
     }
 
-    public function testAndX()
+    public function testAndX(): void
     {
         $filterBuilder = FilterBuilder::create();
 
@@ -56,7 +56,7 @@ class FilterBuilderTest extends TestCase
         $this->assertEquals('(&(givename=Jensen)(uid=bJensen))', (string) $filter);
     }
 
-    public function testOrX()
+    public function testOrX(): void
     {
         $filterBuilder = FilterBuilder::create();
 
@@ -68,7 +68,7 @@ class FilterBuilderTest extends TestCase
         $this->assertEquals('(|(givename=Jensen)(uid=bJensen))', (string) $filter);
     }
 
-    public function testNot()
+    public function testNot(): void
     {
         $filterBuilder = FilterBuilder::create();
 
@@ -77,7 +77,7 @@ class FilterBuilderTest extends TestCase
         $this->assertEquals('(!(uid=bJensen))', (string) $filter);
     }
 
-    public function testCreateWithStringFilter()
+    public function testCreateWithStringFilter(): void
     {
         $stringFilter = '(cn=John Doe)';
 
@@ -91,7 +91,7 @@ class FilterBuilderTest extends TestCase
         $this->assertInstanceOf(Expression\Comparison::class, $expression);
     }
 
-    public function testInvalidArgumentExceptionOnNullExpression()
+    public function testInvalidArgumentExceptionOnNullExpression(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
