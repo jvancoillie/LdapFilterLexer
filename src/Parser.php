@@ -14,8 +14,11 @@ use Jvancoillie\LdapFilterLexer\AST\SimpleNode;
 
 class Parser
 {
+    private const MAX_DEPTH = 100;
+
     private Lexer $lexer;
     private Filter $filter;
+    private int $depth = 0;
 
     public function __construct(Filter $filter)
     {
@@ -44,9 +47,15 @@ class Parser
      */
     private function parseExpression(): Node
     {
+        if (++$this->depth > self::MAX_DEPTH) {
+            $this->syntaxError('maximum filter nesting depth of '.self::MAX_DEPTH.' exceeded');
+        }
+
         $this->match(Lexer::LPAREN);
         $node = $this->parseLogicalOperator();
         $this->match(Lexer::RPAREN);
+
+        --$this->depth;
 
         return $node;
     }
