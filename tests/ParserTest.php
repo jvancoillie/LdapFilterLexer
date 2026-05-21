@@ -3,6 +3,7 @@
 namespace Jvancoillie\LdapFilterLexer\Tests;
 
 use Jvancoillie\LdapFilterLexer\AST\ExtensibleNode;
+use Jvancoillie\LdapFilterLexer\AST\Node;
 use Jvancoillie\LdapFilterLexer\AST\SimpleNode;
 use Jvancoillie\LdapFilterLexer\Filter;
 use Jvancoillie\LdapFilterLexer\FilterException;
@@ -15,7 +16,7 @@ class ParserTest extends TestCase
     {
         $parser = new Parser(new Filter('(&(objectClass=person)(|(sn=*jdoe*)(givenname=*jdoe*)))'));
 
-        $this->assertInstanceOf(\Jvancoillie\LdapFilterLexer\AST\Node::class, $parser->getAST());
+        $this->assertInstanceOf(Node::class, $parser->getAST());
     }
 
     public function testParserThrowExceptionOnSimpleFilterWithoutFilterType(): void
@@ -92,7 +93,7 @@ class ParserTest extends TestCase
     /** @dataProvider validMultipleConditionsProvider */
     public function testParserAcceptsAndOrWithTwoOrMoreConditions(string $filter): void
     {
-        $this->assertInstanceOf(\Jvancoillie\LdapFilterLexer\AST\Node::class, (new Parser(new Filter($filter)))->getAST());
+        $this->assertInstanceOf(Node::class, (new Parser(new Filter($filter)))->getAST());
     }
 
     public static function validMultipleConditionsProvider(): \Generator
@@ -123,5 +124,22 @@ class ParserTest extends TestCase
         yield 'attr + dn + matchingRule' => ['(sn:dn:2.4.6.8.10:=Barney Rubble)', 'sn', true, '2.4.6.8.10', 'Barney Rubble'];
         yield 'matchingRule only' => ['(:1.2.3:=Wilma Flintstone)', null, false, '1.2.3', 'Wilma Flintstone'];
         yield 'dn + matchingRule' => ['(:DN:2.4.6.8.10:=Dino)', null, true, '2.4.6.8.10', 'Dino'];
+    }
+
+    public function testParserRejectsExcessiveNestingDepth(): void
+    {
+        $this->expectException(FilterException::class);
+        $this->expectExceptionMessageMatches('/nesting depth/');
+
+        // 100 levels of NOT → innermost reaches depth 101, exceeds MAX_DEPTH of 100
+        $filter = str_repeat('(!', 100).'(cn=test)'.str_repeat(')', 100);
+        (new Parser(new Filter($filter)))->getAST();
+    }
+
+    public function testParserAcceptsNestingAtDepthLimit(): void
+    {
+        // 99 levels of NOT → innermost reaches depth 100 = MAX_DEPTH, should pass
+        $filter = str_repeat('(!', 99).'(cn=test)'.str_repeat(')', 99);
+        $this->assertInstanceOf(Node::class, (new Parser(new Filter($filter)))->getAST());
     }
 }
