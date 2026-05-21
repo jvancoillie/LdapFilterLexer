@@ -69,6 +69,11 @@ class FilterBuilder
         return new self(new Expression\OrX(...$expressions));
     }
 
+    public function extensible(string $value, ?string $attribute = null, ?string $matchingRule = null, bool $dnAttributes = false): self
+    {
+        return new self(new Expression\ExtensibleMatch($attribute, $dnAttributes, $matchingRule, $value));
+    }
+
     public function not(self|Expression\Base|null $not = null): self
     {
         $expression = null !== $not

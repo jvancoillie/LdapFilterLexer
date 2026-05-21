@@ -5,6 +5,7 @@ namespace Jvancoillie\LdapFilterLexer;
 use Jvancoillie\LdapFilterLexer\AST\AndNode;
 use Jvancoillie\LdapFilterLexer\AST\AssertionValueNode;
 use Jvancoillie\LdapFilterLexer\AST\AttributeNode;
+use Jvancoillie\LdapFilterLexer\AST\ExtensibleNode;
 use Jvancoillie\LdapFilterLexer\AST\FilterTypeNode;
 use Jvancoillie\LdapFilterLexer\AST\Node;
 use Jvancoillie\LdapFilterLexer\AST\NotNode;
@@ -125,11 +126,59 @@ class Parser
      */
     private function parseFilter(): Node
     {
+        $token = $this->lexer->lookahead->value ?? null;
+
+        if (null !== $token && str_contains($token, ':')) {
+            return $this->parseExtensibleFilter($token);
+        }
+
         $attribute = $this->getAttribute();
         $operator = $this->getOperator();
         $assertionValue = $this->getAssertionValue();
 
         return new SimpleNode($attribute, $operator, $assertionValue);
+    }
+
+    /**
+     * @throws FilterException
+     */
+    private function parseExtensibleFilter(string $token): ExtensibleNode
+    {
+        $this->match(Lexer::ATTRIBUTE_OR_ASSERTION_VALUE);
+        $this->match(Lexer::EQUALS);
+
+        $assertionValue = $this->getAssertionValue();
+
+        [$attribute, $dnAttributes, $matchingRule] = $this->parseExtensibleComponents($token);
+
+        if (null === $attribute && null === $matchingRule) {
+            $this->syntaxError('extensible match requires at least an attribute or a matching rule');
+        }
+
+        return new ExtensibleNode($attribute, $dnAttributes, $matchingRule, $assertionValue);
+    }
+
+    /**
+     * @return array{0: ?string, 1: bool, 2: ?string}
+     */
+    private function parseExtensibleComponents(string $token): array
+    {
+        $parts = explode(':', $token);
+        array_pop($parts); // remove trailing empty element (token always ends with ':')
+
+        $attribute = array_shift($parts) ?: null;
+        $dnAttributes = false;
+        $matchingRule = null;
+
+        foreach ($parts as $part) {
+            if (0 === strcasecmp($part, 'dn')) {
+                $dnAttributes = true;
+            } else {
+                $matchingRule = $part;
+            }
+        }
+
+        return [$attribute, $dnAttributes, $matchingRule];
     }
 
     private function getAttribute(): AttributeNode

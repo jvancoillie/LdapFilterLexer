@@ -138,4 +138,24 @@ class FilterBuilderTest extends TestCase
 
         FilterBuilder::create()->not();
     }
+
+    /** @dataProvider extensibleProvider */
+    public function testExtensible(string $expected, string $value, ?string $attribute, ?string $matchingRule, bool $dn): void
+    {
+        $filter = FilterBuilder::create()
+            ->extensible($value, $attribute, $matchingRule, $dn)
+            ->getFilter();
+
+        $this->assertSame($expected, (string) $filter);
+    }
+
+    public static function extensibleProvider(): \Generator
+    {
+        yield 'attr only' => ['(cn:=Betty Rubble)', 'Betty Rubble', 'cn', null, false];
+        yield 'attr + matchingRule' => ['(cn:caseExactMatch:=Fred Flintstone)', 'Fred Flintstone', 'cn', 'caseExactMatch', false];
+        yield 'attr + dn' => ['(o:dn:=Ace Industry)', 'Ace Industry', 'o', null, true];
+        yield 'attr + dn + matchingRule' => ['(sn:dn:2.4.6.8.10:=Barney Rubble)', 'Barney Rubble', 'sn', '2.4.6.8.10', true];
+        yield 'matchingRule only' => ['(:1.2.3:=Wilma Flintstone)', 'Wilma Flintstone', null, '1.2.3', false];
+        yield 'AD recursive membership' => ['(member:1.2.840.113556.1.4.1941:=CN=John,DC=example,DC=com)', 'CN=John,DC=example,DC=com', 'member', '1.2.840.113556.1.4.1941', false];
+    }
 }

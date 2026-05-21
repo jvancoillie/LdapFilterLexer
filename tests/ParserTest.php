@@ -2,6 +2,7 @@
 
 namespace Jvancoillie\LdapFilterLexer\Tests;
 
+use Jvancoillie\LdapFilterLexer\AST\ExtensibleNode;
 use Jvancoillie\LdapFilterLexer\AST\SimpleNode;
 use Jvancoillie\LdapFilterLexer\Filter;
 use Jvancoillie\LdapFilterLexer\FilterException;
@@ -104,5 +105,27 @@ class ParserTest extends TestCase
         yield 'AND with three conditions' => ['(&(cn=a)(sn=b)(uid=c))'];
         yield 'OR with two conditions' => ['(|(cn=a)(sn=b))'];
         yield 'OR with three conditions' => ['(|(cn=a)(sn=b)(uid=c))'];
+    }
+
+    /** @dataProvider extensibleMatchProvider */
+    public function testParserBuildsExtensibleNode(string $filter, ?string $attr, bool $dn, ?string $rule, ?string $value): void
+    {
+        $ast = (new Parser(new Filter($filter)))->getAST();
+
+        $this->assertInstanceOf(ExtensibleNode::class, $ast);
+        $this->assertSame($attr, $ast->attribute);
+        $this->assertSame($dn, $ast->dnAttributes);
+        $this->assertSame($rule, $ast->matchingRule);
+        $this->assertSame($value, $ast->assertionValue->value);
+    }
+
+    public static function extensibleMatchProvider(): \Generator
+    {
+        yield 'attr only' => ['(cn:=Betty Rubble)', 'cn', false, null, 'Betty Rubble'];
+        yield 'attr + matchingRule' => ['(cn:caseExactMatch:=Fred Flintstone)', 'cn', false, 'caseExactMatch', 'Fred Flintstone'];
+        yield 'attr + dn' => ['(o:dn:=Ace Industry)', 'o', true, null, 'Ace Industry'];
+        yield 'attr + dn + matchingRule' => ['(sn:dn:2.4.6.8.10:=Barney Rubble)', 'sn', true, '2.4.6.8.10', 'Barney Rubble'];
+        yield 'matchingRule only' => ['(:1.2.3:=Wilma Flintstone)', null, false, '1.2.3', 'Wilma Flintstone'];
+        yield 'dn + matchingRule' => ['(:DN:2.4.6.8.10:=Dino)', null, true, '2.4.6.8.10', 'Dino'];
     }
 }

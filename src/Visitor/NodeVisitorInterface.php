@@ -3,6 +3,7 @@
 namespace Jvancoillie\LdapFilterLexer\Visitor;
 
 use Jvancoillie\LdapFilterLexer\AST\AndNode;
+use Jvancoillie\LdapFilterLexer\AST\ExtensibleNode;
 use Jvancoillie\LdapFilterLexer\AST\NotNode;
 use Jvancoillie\LdapFilterLexer\AST\OrNode;
 use Jvancoillie\LdapFilterLexer\AST\SimpleNode;
@@ -31,4 +32,9 @@ interface NodeVisitorInterface
      * @return T
      */
     public function visitSimpleNode(SimpleNode $node): mixed;
+
+    /**
+     * @return T
+     */
+    public function visitExtensibleNode(ExtensibleNode $node): mixed;
 }
