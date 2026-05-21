@@ -51,6 +51,10 @@ class FilterBuilder
     {
         $expressions = $this->processExpressions(...$x);
 
+        if (null !== $this->expression) {
+            array_unshift($expressions, $this->expression);
+        }
+
         return new self(new Expression\AndX(...$expressions));
     }
 
@@ -58,12 +62,22 @@ class FilterBuilder
     {
         $expressions = $this->processExpressions(...$x);
 
+        if (null !== $this->expression) {
+            array_unshift($expressions, $this->expression);
+        }
+
         return new self(new Expression\OrX(...$expressions));
     }
 
-    public function not(self|Expression\Base $not): self
+    public function not(self|Expression\Base|null $not = null): self
     {
-        $expression = $this->processExpressions($not)[0];
+        $expression = null !== $not
+            ? $this->processExpressions($not)[0]
+            : $this->expression;
+
+        if (null === $expression) {
+            throw new \InvalidArgumentException('Expression cannot be null');
+        }
 
         return new self(new Expression\Not($expression));
     }
