@@ -2,10 +2,11 @@
 
 ## Supported versions
 
-| Version | Supported |
-|---------|-----------|
-| 2.0.x   | Yes       |
-| < 2.0   | No        |
+| Version | Supported                                 |
+|---------|-------------------------------------------|
+| 2.1.x   | Yes                                       |
+| 2.0.x   | Security fixes only (projects on PHP 8.1) |
+| < 2.0   | No                                        |
 
 ## Reporting a vulnerability
 
