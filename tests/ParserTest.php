@@ -114,6 +114,20 @@ class ParserTest extends TestCase
         yield 'AND with one condition' => ['(&(cn=value))'];
         yield 'OR with zero conditions' => ['(|)'];
         yield 'OR with one condition' => ['(|(cn=value))'];
+        yield 'NOT with zero conditions' => ['(!)'];
+    }
+
+    public function testNotWithoutConditionIsInvalid(): void
+    {
+        $this->assertFalse((new Filter('(!)'))->isValid());
+    }
+
+    public function testEmptyAssertionValueIsAnEmptyString(): void
+    {
+        $ast = (new Parser(new Filter('(cn=)')))->getAST();
+
+        $this->assertInstanceOf(SimpleNode::class, $ast);
+        $this->assertSame('', $ast->assertionValue->value);
     }
 
     /** @dataProvider validMultipleConditionsProvider */
