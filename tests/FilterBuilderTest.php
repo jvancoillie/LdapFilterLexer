@@ -18,6 +18,41 @@ class FilterBuilderTest extends TestCase
         $this->assertEquals('(givename=Jensen)', (string) $filter);
     }
 
+    /**
+     * @return iterable<string, array{FilterBuilder, string}>
+     */
+    public static function escapingMethods(): iterable
+    {
+        $qb = FilterBuilder::create();
+
+        yield 'present' => [$qb->present('mail'), '(mail=*)'];
+        yield 'startsWith' => [$qb->startsWith('cn', 'Ba'), '(cn=Ba*)'];
+        yield 'startsWith escapes' => [$qb->startsWith('cn', 'Ba(*'), '(cn=Ba\28\2a*)'];
+        yield 'endsWith' => [$qb->endsWith('cn', 'sen'), '(cn=*sen)'];
+        yield 'endsWith escapes' => [$qb->endsWith('cn', 'a\b)'), '(cn=*a\5cb\29)'];
+        yield 'contains' => [$qb->contains('cn', 'ab'), '(cn=*ab*)'];
+        yield 'contains escapes' => [$qb->contains('cn', 'ab*'), '(cn=*ab\2a*)'];
+        yield 'contains injection' => [$qb->contains('uid', '*)(uid=*'), '(uid=*\2a\29\28uid=\2a*)'];
+    }
+
+    #[DataProvider('escapingMethods')]
+    public function testEscapingMethods(FilterBuilder $builder, string $expected): void
+    {
+        $filter = $builder->getFilter();
+
+        $this->assertSame($expected, (string) $filter);
+        $this->assertTrue($filter->isValid());
+    }
+
+    public function testEscapingMethodsCompose(): void
+    {
+        $qb = FilterBuilder::create();
+
+        $filter = $qb->andX($qb->present('mail'), $qb->orX($qb->startsWith('cn', 'Ba'), $qb->contains('sn', '(x)')))->getFilter();
+
+        $this->assertSame('(&(mail=*)(|(cn=Ba*)(sn=*\28x\29*)))', (string) $filter);
+    }
+
     public function testGreaterThan(): void
     {
         $filterBuilder = FilterBuilder::create();

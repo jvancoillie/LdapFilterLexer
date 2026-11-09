@@ -44,6 +44,26 @@ class FilterBuilder
         return new self(new Expression\Comparison($attribute, Expression\Comparison::TILDE_EQUALS, $value));
     }
 
+    public function present(string $attribute): self
+    {
+        return $this->equals($attribute, '*');
+    }
+
+    public function startsWith(string $attribute, string $value): self
+    {
+        return $this->equals($attribute, Value::escape($value).'*');
+    }
+
+    public function endsWith(string $attribute, string $value): self
+    {
+        return $this->equals($attribute, '*'.Value::escape($value));
+    }
+
+    public function contains(string $attribute, string $value): self
+    {
+        return $this->equals($attribute, '*'.Value::escape($value).'*');
+    }
+
     public function andX(self|Expression\Base ...$x): self
     {
         $expressions = $this->collectOperands(...$x);
