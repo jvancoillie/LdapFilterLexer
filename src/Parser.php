@@ -243,7 +243,7 @@ class Parser
 
         // Short-circuit on first condition, usually types match
         if ($lookaheadType !== $token) {
-            $this->syntaxError((string) $this->lexer->getLiteral($token));
+            $this->syntaxError(Lexer::ATTRIBUTE_OR_ASSERTION_VALUE === $token ? 'attribute or value' : $token);
         }
 
         $this->lexer->moveNext();
