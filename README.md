@@ -24,7 +24,7 @@ build them programmatically, and walk them with visitors. Pure PHP: `ext-ldap` i
 composer require jvancoillie/ldap-filter-lexer
 ```
 
-Requires PHP 8.1 or later. The only dependency is [`doctrine/lexer`](https://github.com/doctrine/lexer).
+Requires PHP 8.2 or later. The only dependency is [`doctrine/lexer`](https://github.com/doctrine/lexer).
 
 ## Validate a filter
 

@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`FilterBuilder`**: `present()`, `startsWith()`, `endsWith()` and `contains()`, which escape the value:
   `contains('cn', 'ab*')` gives `(cn=*ab\2a*)`. `equals()` and the other comparisons still write the value as given.
 
+### Changed
+
+- **PHP 8.2 or later is required** (PHP 8.1 is no longer supported since December 31, 2025). Composer keeps
+  projects on PHP 8.1 on 2.0.x.
+- **`Lexer`** is marked `@internal`: it is an implementation detail of the `Parser` and may change in any release.
+
 ### Fixed
 
 - **`Parser`**: syntax errors show the expected character (`Expected (, got end of string.`) instead of the name of
