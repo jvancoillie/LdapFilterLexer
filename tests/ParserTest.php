@@ -56,6 +56,32 @@ class ParserTest extends TestCase
         yield 'ampersand in value' => ['(attr=foo&bar)', 'foo&bar'];
         yield 'exclamation in value' => ['(attr=foo!bar)', 'foo!bar'];
         yield 'multiple pipes' => ['(attr=a|b|c)', 'a|b|c'];
+        yield 'escaped parentheses' => ['(cn=a\28b\29)', 'a\28b\29'];
+        yield 'escaped asterisk' => ['(cn=*\2A*)', '*\2A*'];
+        yield 'escaped backslash' => ['(cn=a\5c)', 'a\5c'];
+    }
+
+    /** @dataProvider invalidAssertionValueProvider */
+    public function testParserRejectsUnescapedSpecialCharsInAssertionValue(string $filter): void
+    {
+        $this->expectException(FilterException::class);
+
+        (new Parser(new Filter($filter)))->getAST();
+    }
+
+    public static function invalidAssertionValueProvider(): \Generator
+    {
+        yield 'unescaped left parenthesis' => ['(cn=a(b)'];
+        yield 'value starting with left parenthesis' => ['(cn=(a)'];
+        yield 'left parenthesis in a nested filter' => ['(&(cn=a(b)(sn=c))'];
+        yield 'lone backslash at end' => ['(cn=a\)'];
+        yield 'backslash followed by non hex' => ['(cn=a\zz)'];
+        yield 'backslash followed by one hex digit' => ['(cn=a\2)'];
+    }
+
+    public function testFilterWithUnescapedLeftParenthesisIsInvalid(): void
+    {
+        $this->assertFalse((new Filter('(cn=a(b)'))->isValid());
     }
 
     /** @dataProvider invalidAttributeWithSpacesProvider */
