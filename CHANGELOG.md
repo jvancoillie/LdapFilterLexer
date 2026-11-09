@@ -60,6 +60,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `LexerTest`: replaced the single `assertInstanceOf` test with comprehensive tokenisation
   coverage for all token types and filter structures.
 
-## [1.0.1] - previous release
+## [1.0.1] - 2024-11-22
 
-## [1.0.0] - previous release
+## [1.0.0] - 2024-11-14
+
+[2.0.1]: https://github.com/jvancoillie/LdapFilterLexer/compare/2.0.0...2.0.1
+[2.0.0]: https://github.com/jvancoillie/LdapFilterLexer/compare/1.0.1...2.0.0
+[1.0.1]: https://github.com/jvancoillie/LdapFilterLexer/compare/1.0.0...1.0.1
+[1.0.0]: https://github.com/jvancoillie/LdapFilterLexer/releases/tag/1.0.0
