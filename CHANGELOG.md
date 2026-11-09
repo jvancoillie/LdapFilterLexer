@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`Parser`**: an assertion value can no longer contain an unescaped `(`, nor a `\` that does not start a
   two hex digits escape (RFC 4515). Such filters were accepted, then rejected by the directory with a less
   explicit error. Escape them as `\28` and `\5c`, for instance with `ldap_escape($value, '', LDAP_ESCAPE_FILTER)`.
+- **`Parser`**: `(!)` throws a `FilterException` instead of a `TypeError`, so `Filter::isValid()` returns `false`
+  instead of failing.
+- **`Parser`**: an empty assertion value, allowed by RFC 4515, is an empty string instead of `null`:
+  `FilterBuilder::create('(cn=)')` no longer throws while `Filter::isValid()` accepted the filter.
+- **`FilterBuilder`**: `andX()` and `orX()` with a single expression return that expression instead of
+  `(&(a=b))` or `(|(a=b))`, which the parser rejects. Without any expression they throw an `InvalidArgumentException`.
 
 ## [2.0.0] - 2026-05-21
 

@@ -46,24 +46,16 @@ class FilterBuilder
 
     public function andX(self|Expression\Base ...$x): self
     {
-        $expressions = $this->processExpressions(...$x);
+        $expressions = $this->collectOperands(...$x);
 
-        if (null !== $this->expression) {
-            array_unshift($expressions, $this->expression);
-        }
-
-        return new self(new Expression\AndX(...$expressions));
+        return new self(1 === \count($expressions) ? $expressions[0] : new Expression\AndX(...$expressions));
     }
 
     public function orX(self|Expression\Base ...$x): self
     {
-        $expressions = $this->processExpressions(...$x);
+        $expressions = $this->collectOperands(...$x);
 
-        if (null !== $this->expression) {
-            array_unshift($expressions, $this->expression);
-        }
-
-        return new self(new Expression\OrX(...$expressions));
+        return new self(1 === \count($expressions) ? $expressions[0] : new Expression\OrX(...$expressions));
     }
 
     public function extensible(string $value, ?string $attribute = null, ?string $matchingRule = null, bool $dnAttributes = false): self
@@ -92,6 +84,27 @@ class FilterBuilder
     public function getFilter(): Filter
     {
         return new Filter((string) $this->expression);
+    }
+
+    /**
+     * Operands of an AND or OR: the current expression first, if any. A single operand is used as is,
+     * since "(&(a=b))" and "(|(a=b))" are invalid (RFC 4515 requires at least 2 conditions).
+     *
+     * @return non-empty-list<Expression\Base>
+     */
+    private function collectOperands(self|Expression\Base ...$x): array
+    {
+        $expressions = array_values($this->processExpressions(...$x));
+
+        if (null !== $this->expression) {
+            array_unshift($expressions, $this->expression);
+        }
+
+        if ([] === $expressions) {
+            throw new \InvalidArgumentException('AND and OR filters require at least 1 expression');
+        }
+
+        return $expressions;
     }
 
     /**

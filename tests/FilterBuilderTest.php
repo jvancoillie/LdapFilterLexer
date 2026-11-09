@@ -139,6 +139,42 @@ class FilterBuilderTest extends TestCase
         FilterBuilder::create()->not();
     }
 
+    public function testOrXWithASingleExpressionReturnsThatExpression(): void
+    {
+        $filter = FilterBuilder::create()->orX(FilterBuilder::create()->equals('uid', 'bJensen'))->getFilter();
+
+        $this->assertSame('(uid=bJensen)', (string) $filter);
+        $this->assertTrue($filter->isValid());
+    }
+
+    public function testAndXWithASingleExpressionReturnsThatExpression(): void
+    {
+        $filter = FilterBuilder::create()->andX(FilterBuilder::create()->equals('uid', 'bJensen'))->getFilter();
+
+        $this->assertSame('(uid=bJensen)', (string) $filter);
+        $this->assertTrue($filter->isValid());
+    }
+
+    public function testOrXWithoutExpressionThrows(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        FilterBuilder::create()->orX();
+    }
+
+    public function testAndXWithoutExpressionThrows(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        FilterBuilder::create()->andX();
+    }
+
+    public function testCreateAcceptsAnEmptyAssertionValue(): void
+    {
+        $this->assertSame('(cn=)', (string) FilterBuilder::create('(cn=)')->getFilter());
+        $this->assertSame('(cn~=)', (string) FilterBuilder::create('(cn~=)')->getFilter());
+    }
+
     /** @dataProvider extensibleProvider */
     public function testExtensible(string $expected, string $value, ?string $attribute, ?string $matchingRule, bool $dn): void
     {
