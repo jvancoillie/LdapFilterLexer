@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **`Value::escape()`**: escapes an assertion value in pure PHP (`\`, `*`, `(`, `)` and NUL, RFC 4515), with the
+  same result as `ldap_escape($value, '', LDAP_ESCAPE_FILTER)` and without `ext-ldap`. `keepWildcards: true`
+  leaves `*` as a wildcard.
+- **`FilterBuilder`**: `present()`, `startsWith()`, `endsWith()` and `contains()`, which escape the value:
+  `contains('cn', 'ab*')` gives `(cn=*ab\2a*)`. `equals()` and the other comparisons still write the value as given.
+
 ### Fixed
 
 - **`Parser`**: syntax errors show the expected character (`Expected (, got end of string.`) instead of the name of

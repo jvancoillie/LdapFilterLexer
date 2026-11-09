@@ -14,6 +14,7 @@ build them programmatically, and walk them with visitors. Pure PHP: `ext-ldap` i
 - **Validate** a filter written by a user or stored in a configuration.
 - **Parse** a filter into an AST (`AndNode`, `OrNode`, `NotNode`, `SimpleNode`, `ExtensibleNode`).
 - **Build** filters with a fluent, immutable builder, or start from an existing filter and extend it.
+- **Escape** user input in pure PHP, or let the builder do it, to prevent LDAP injection.
 - **Translate** filters to anything else (SQL, Doctrine criteria, a list of attributes…) with a visitor.
 - **Follow RFC 4515**, including extensible matches (`(cn:caseExactMatch:=Fred)`, `(sn:dn:2.4.6.8.10:=Barney)`).
 
@@ -119,17 +120,37 @@ echo FilterBuilder::create('(objectClass=person)')
 
 ### Escape user input
 
-The builder writes values as they are given, so that wildcards such as `Tim*` keep working.
-**Escape any value coming from a user**, otherwise `*`, `(`, `)` or `\` change the meaning of the filter
-(LDAP injection):
+A value coming from a user must be escaped, otherwise `*`, `(`, `)` or `\` change the meaning of the filter
+(LDAP injection): `(uid=*)(uid=*)` instead of a search for a strange login.
+
+`present()`, `startsWith()`, `endsWith()` and `contains()` escape the value for you:
 
 ```php
 $input = 'Babs (Jensen)*';
+$qb = FilterBuilder::create();
 
-echo FilterBuilder::create()
-    ->equals('cn', ldap_escape($input, '', LDAP_ESCAPE_FILTER))
-    ->getFilter();
-// (cn=Babs \28Jensen\29\2a)
+echo $qb->andX($qb->present('mail'), $qb->contains('cn', $input))->getFilter();
+// (&(mail=*)(cn=*Babs \28Jensen\29\2a*))
+```
+
+| Method                     | Produces            |
+|----------------------------|---------------------|
+| `present('mail')`          | `(mail=*)`          |
+| `startsWith('cn', 'Ba(')`  | `(cn=Ba\28*)`       |
+| `endsWith('cn', 'sen')`    | `(cn=*sen)`         |
+| `contains('cn', 'ab*')`    | `(cn=*ab\2a*)`      |
+
+`equals()`, `approximate()`, `greaterThan()` and `lowerThan()` write the value as it is given, so that wildcards
+such as `Tim*` keep working. Escape user input with `Value::escape()`, in pure PHP (same result as
+`ldap_escape($value, '', LDAP_ESCAPE_FILTER)`, without `ext-ldap`):
+
+```php
+use Jvancoillie\LdapFilterLexer\Value;
+
+echo FilterBuilder::create()->equals('uid', Value::escape('*)(uid=*'))->getFilter();
+// (uid=\2a\29\28uid=\2a)
+
+Value::escape('Tim*(x)', keepWildcards: true); // 'Tim*\28x\29': "*" stays a wildcard, never use it on user input
 ```
 
 ## Write a visitor
