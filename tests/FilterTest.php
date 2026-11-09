@@ -3,11 +3,12 @@
 namespace Jvancoillie\LdapFilterLexer\Tests;
 
 use Jvancoillie\LdapFilterLexer\Filter;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class FilterTest extends TestCase
 {
-    /** @dataProvider  validFilters */
+    #[DataProvider('validFilters')]
     public function testFilterIsValid(string $filter): void
     {
         $filter = new Filter($filter);
@@ -46,7 +47,7 @@ class FilterTest extends TestCase
         }
     }
 
-    /** @dataProvider invalidFilters */
+    #[DataProvider('invalidFilters')]
     public function testFilterIsInvalid(string $filter): void
     {
         $this->assertFalse((new Filter($filter))->isValid());
