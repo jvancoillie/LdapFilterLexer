@@ -38,6 +38,26 @@ class ParserTest extends TestCase
         $parser->getAST();
     }
 
+    /**
+     * @return iterable<string, array{string, string}>
+     */
+    public static function expectedTokenProvider(): iterable
+    {
+        yield 'missing (' => ['(&(cn=a)', "Expected (, got end of string. on query '(&(cn=a)'"];
+        yield 'missing )' => ['(cn=a', "Expected ), got end of string. on query '(cn=a'"];
+        yield 'missing attribute' => ['(=a)', "Expected attribute or value, got '=' on query '(=a)'"];
+        yield 'missing = in extensible match' => ['(cn:dn:a)', "Expected =, got ')' on query '(cn:dn:a)'"];
+    }
+
+    #[DataProvider('expectedTokenProvider')]
+    public function testSyntaxErrorShowsTheExpectedCharacter(string $filter, string $message): void
+    {
+        $this->expectException(FilterException::class);
+        $this->expectExceptionMessage($message);
+
+        (new Parser(new Filter($filter)))->getAST();
+    }
+
     #[DataProvider('assertionValueWithSpecialCharsProvider')]
     public function testAssertionValuePreservesSpecialChars(string $filter, string $expectedValue): void
     {
