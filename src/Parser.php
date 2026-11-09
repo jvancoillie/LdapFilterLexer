@@ -213,8 +213,17 @@ class Parser
         $value = null;
 
         while (null !== $this->lexer->lookahead && !$this->lexer->isNextToken(Lexer::RPAREN)) {
+            if ($this->lexer->isNextToken(Lexer::LPAREN)) {
+                $this->syntaxError('assertion value, "(" must be escaped as \28');
+            }
+
             $value = ($value ?? '').$this->lexer->lookahead->value;
             $this->lexer->moveNext();
+        }
+
+        // RFC 4515: a backslash in an assertion value always starts a two hex digits escape.
+        if (null !== $value && 1 === preg_match('/\\\\(?![0-9A-Fa-f]{2})/', $value)) {
+            $this->syntaxError('"\" followed by two hex digits in assertion value');
         }
 
         return new AssertionValueNode($value);

@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- **`Parser`**: an assertion value can no longer contain an unescaped `(`, nor a `\` that does not start a
+  two hex digits escape (RFC 4515). Such filters were accepted, then rejected by the directory with a less
+  explicit error. Escape them as `\28` and `\5c`, for instance with `ldap_escape($value, '', LDAP_ESCAPE_FILTER)`.
+
 ## [2.0.0] - 2026-05-21
 
 ### Breaking Changes
