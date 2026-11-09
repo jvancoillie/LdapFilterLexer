@@ -12,11 +12,11 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "2.0.x-dev"
+            "dev-main": "2.1.x-dev"
         }
     },
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "doctrine/lexer": "^2.0 || ^3.0"
     },
     "require-dev": {

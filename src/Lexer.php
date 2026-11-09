@@ -4,7 +4,13 @@ namespace Jvancoillie\LdapFilterLexer;
 
 use Doctrine\Common\Lexer\AbstractLexer;
 
-/** @extends AbstractLexer<string, string> */
+/**
+ * Tokenizes filters for the Parser. Its API may change in any release.
+ *
+ * @internal
+ *
+ * @extends AbstractLexer<string, string>
+ */
 class Lexer extends AbstractLexer
 {
     public const LPAREN = '(';
