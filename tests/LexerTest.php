@@ -4,6 +4,7 @@ namespace Jvancoillie\LdapFilterLexer\Tests;
 
 use Doctrine\Common\Lexer\AbstractLexer;
 use Jvancoillie\LdapFilterLexer\Lexer;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class LexerTest extends TestCase
@@ -38,9 +39,8 @@ class LexerTest extends TestCase
     /**
      * After construction lookahead and token are both null.
      * The first moveNext() loads the first real token into lookahead.
-     *
-     * @dataProvider provideSingleTokens
      */
+    #[DataProvider('provideSingleTokens')]
     public function testSingleTokenType(string $input, string $expectedType, string $expectedValue): void
     {
         $lexer = new Lexer($input);
@@ -225,9 +225,8 @@ class LexerTest extends TestCase
 
     /**
      * @param list<array{string, string}> $expectedTokens
-     *
-     * @dataProvider provideFilterSequences
      */
+    #[DataProvider('provideFilterSequences')]
     public function testFilterTokenSequence(string $input, array $expectedTokens): void
     {
         $lexer = new Lexer($input);

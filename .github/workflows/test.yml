@@ -16,14 +16,14 @@ jobs:
         strategy:
             fail-fast: true
             matrix:
-                php: ['8.1', '8.2', '8.3']
+                php: ['8.1', '8.2', '8.3', '8.4', '8.5']
                 deps: [highest]
                 include:
                     - php: '8.1'
                       deps: lowest
         steps:
             - name: Checkout code
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: Setup PHP
               uses: shivammathur/setup-php@v2
@@ -34,7 +34,7 @@ jobs:
                   coverage: xdebug
 
             - name: Install Composer dependencies
-              uses: ramsey/composer-install@v2
+              uses: ramsey/composer-install@v3
               with:
                   dependency-versions: ${{ matrix.deps }}
 

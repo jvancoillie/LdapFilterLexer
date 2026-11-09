@@ -4,6 +4,7 @@ namespace Jvancoillie\LdapFilterLexer\Tests;
 
 use Jvancoillie\LdapFilterLexer\Expression;
 use Jvancoillie\LdapFilterLexer\FilterBuilder;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class FilterBuilderTest extends TestCase
@@ -175,7 +176,7 @@ class FilterBuilderTest extends TestCase
         $this->assertSame('(cn~=)', (string) FilterBuilder::create('(cn~=)')->getFilter());
     }
 
-    /** @dataProvider extensibleProvider */
+    #[DataProvider('extensibleProvider')]
     public function testExtensible(string $expected, string $value, ?string $attribute, ?string $matchingRule, bool $dn): void
     {
         $filter = FilterBuilder::create()

@@ -1,10 +1,15 @@
 {
     "name": "jvancoillie/ldap-filter-lexer",
-    "description": "A library validating ldap filters",
+    "description": "Lexer, parser and builder for LDAP search filters (RFC 4515)",
     "type": "library",
+    "keywords": ["ldap", "filter", "rfc4515", "lexer", "parser", "builder"],
     "authors": [
         {"name": "Jérémy Vancoillie"}
     ],
+    "support": {
+        "issues": "https://github.com/jvancoillie/LdapFilterLexer/issues",
+        "source": "https://github.com/jvancoillie/LdapFilterLexer"
+    },
     "extra": {
         "branch-alias": {
             "dev-main": "2.0.x-dev"
@@ -15,7 +20,7 @@
         "doctrine/lexer": "^2.0 || ^3.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^10.2",
+        "phpunit/phpunit": "^10.5 || ^11.5 || ^12.0",
         "vimeo/psalm": "^6.0",
         "friendsofphp/php-cs-fixer": "^3.64"
     },

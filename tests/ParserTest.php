@@ -8,6 +8,7 @@ use Jvancoillie\LdapFilterLexer\AST\SimpleNode;
 use Jvancoillie\LdapFilterLexer\Filter;
 use Jvancoillie\LdapFilterLexer\FilterException;
 use Jvancoillie\LdapFilterLexer\Parser;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
@@ -37,9 +38,7 @@ class ParserTest extends TestCase
         $parser->getAST();
     }
 
-    /**
-     * @dataProvider assertionValueWithSpecialCharsProvider
-     */
+    #[DataProvider('assertionValueWithSpecialCharsProvider')]
     public function testAssertionValuePreservesSpecialChars(string $filter, string $expectedValue): void
     {
         $parser = new Parser(new Filter($filter));
@@ -61,7 +60,7 @@ class ParserTest extends TestCase
         yield 'escaped backslash' => ['(cn=a\5c)', 'a\5c'];
     }
 
-    /** @dataProvider invalidAssertionValueProvider */
+    #[DataProvider('invalidAssertionValueProvider')]
     public function testParserRejectsUnescapedSpecialCharsInAssertionValue(string $filter): void
     {
         $this->expectException(FilterException::class);
@@ -84,7 +83,7 @@ class ParserTest extends TestCase
         $this->assertFalse((new Filter('(cn=a(b)'))->isValid());
     }
 
-    /** @dataProvider invalidAttributeWithSpacesProvider */
+    #[DataProvider('invalidAttributeWithSpacesProvider')]
     public function testParserRejectsAttributeWithSpaces(string $filter): void
     {
         $this->expectException(FilterException::class);
@@ -100,7 +99,7 @@ class ParserTest extends TestCase
         yield 'spaces on both sides' => ['(attr = value)'];
     }
 
-    /** @dataProvider insufficientConditionsProvider */
+    #[DataProvider('insufficientConditionsProvider')]
     public function testParserRejectsAndOrWithLessThanTwoConditions(string $filter): void
     {
         $this->expectException(FilterException::class);
@@ -130,7 +129,7 @@ class ParserTest extends TestCase
         $this->assertSame('', $ast->assertionValue->value);
     }
 
-    /** @dataProvider validMultipleConditionsProvider */
+    #[DataProvider('validMultipleConditionsProvider')]
     public function testParserAcceptsAndOrWithTwoOrMoreConditions(string $filter): void
     {
         $this->assertInstanceOf(Node::class, (new Parser(new Filter($filter)))->getAST());
@@ -144,7 +143,7 @@ class ParserTest extends TestCase
         yield 'OR with three conditions' => ['(|(cn=a)(sn=b)(uid=c))'];
     }
 
-    /** @dataProvider extensibleMatchProvider */
+    #[DataProvider('extensibleMatchProvider')]
     public function testParserBuildsExtensibleNode(string $filter, ?string $attr, bool $dn, ?string $rule, ?string $value): void
     {
         $ast = (new Parser(new Filter($filter)))->getAST();

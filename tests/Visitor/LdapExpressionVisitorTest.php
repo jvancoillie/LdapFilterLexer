@@ -13,6 +13,7 @@ use Jvancoillie\LdapFilterLexer\AST\SimpleNode;
 use Jvancoillie\LdapFilterLexer\Expression;
 use Jvancoillie\LdapFilterLexer\Lexer;
 use Jvancoillie\LdapFilterLexer\Visitor\LdapExpressionVisitor;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class LdapExpressionVisitorTest extends TestCase
@@ -75,7 +76,7 @@ class LdapExpressionVisitorTest extends TestCase
         $simpleNode->accept($visitor);
     }
 
-    /** @dataProvider extensibleNodeProvider */
+    #[DataProvider('extensibleNodeProvider')]
     public function testVisitExtensibleNode(ExtensibleNode $node, string $expected): void
     {
         $visitor = new LdapExpressionVisitor();
